@@ -16,7 +16,15 @@ mysql = MySQL(app)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    cur = mysql.connection.cursor()
+    resultValue =  cur.execute("SELECT * FROM blog")
+    print(resultValue)
+    if resultValue > 0:
+        blogs = cur.fetchall()
+        cur.close()
+        return render_template('index.html', blogs=blogs)
+    cur.close()
+    return render_template('index.html', blogs=None)
 
 @app.route('/about/')
 def about():
