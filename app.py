@@ -32,7 +32,14 @@ def about():
 
 @app.route('/blogs/<int:id>/')
 def blogs(id):
-    return render_template('blogs.html', blog_id = id)
+    cur = mysql.connection.cursor()
+    queryStatement = f"SELECT * FROM blog WHERE blog_id = {id}"
+    print(queryStatement)
+    resultValue = cur.execute(queryStatement)
+    if resultValue > 0:
+        blog = cur.fetchone()
+        return render_template('blog.html', blog = blog)
+    return 'Blog not found'
 
 @app.route('/register/', methods=['GET', 'POST'])
 def register():
