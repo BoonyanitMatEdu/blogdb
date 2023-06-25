@@ -117,7 +117,9 @@ def delete_blog(id):
 
 @app.route('/logout')
 def logout():
-    return render_template('logout.html')
+    session.clear()
+    flash("You have been logged out", 'info')
+    return redirect('/')
 
 if __name__ == '__main__':
     app.run(debug=True)
