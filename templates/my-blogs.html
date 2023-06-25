@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="display-2" > My Blogs </div>
+    {% if my_blogs %}
+        <table class="table">
+            <thead>
+                <tr>
+                <th scope="col">#</th>
+                <th scope="col">Title</th>
+                <th scope="col">Edit</th>
+                <th scope="col">Delete</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for my_blog in my_blogs %}
+                    <tr>
+                    <th scope="row">{{ my_blog['blog_id'] }}</th>
+                    <td>{{ my_blog['title'] }}</td>
+                    <td><a href="/edit-blog/{{my_blog['blog_id']}}" class="btn btn-sm btn-primary">Edit</a></td>
+                    <td><a href="/delete-blog/{{ my_blog['blog_id']}}" class="btn btn-sm btn-danger">Delete</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    {% else %}
+        <div class="display-4" > no blogs by you </div>
+    {% endif %}
+{% endblock %}

@@ -140,15 +140,56 @@ def write_blog():
 
 @app.route('/my-blogs/')
 def my_blogs():
-    return render_template('my-blogs.html')
+    try:
+        username = session['username']
+    except:
+        flash('Please sign in first', 'danger')
+        return redirect('/login')
+
+    cur = mysql.connection.cursor()
+    queryStatement = f"SELECT * FROM blog WHERE username = '{username}'"
+    print(queryStatement)
+    result_value = cur.execute(queryStatement) 
+    if result_value > 0:
+        my_blogs = cur.fetchall()
+        return render_template('my-blogs.html', my_blogs=my_blogs)
+    else:
+        return render_template('my-blogs.html',my_blogs=None)
 
 @app.route('/edit-blog/<int:id>/', methods=['GET', 'POST'])
 def edit_blog(id):
-    return render_template('edit-blog.html')
+    if request.method == 'POST':
+        cur = mysql.connection.cursor()
+        title = request.form['title']
+        body = request.form['body']
+        queryStatement = f"UPDATE blog SET title= '{title}', body = '{body}' WHERE blog_id = {id}"
+        print(queryStatement)
+        cur.execute(queryStatement)
+        mysql.connection.commit()
+        cur.close()
+        flash('Blog updated', 'success')
+        return redirect(f'/blogs/{id}')
+    else:
+        cur = mysql.connection.cursor()
+        queryStatement = f"SELECT * FROM blog WHERE blog_id = {id}"
+        print(queryStatement)
+        result_value = cur.execute(queryStatement)
+        if result_value > 0:
+            blog = cur.fetchone()
+            blog_form = {}
+            blog_form['title'] = blog['title']
+            blog_form['body'] = blog['body']
+            return render_template('edit-blog.html', blog_form=blog_form)
 
-@app.route('/delete-blog/<int:id>/', methods=['POST'])
+@app.route('/delete-blog/<int:id>/')
 def delete_blog(id):
-    return 'success'
+    cur = mysql.connection.cursor()
+    queryStatement = f"DELETE FROM blog WHERE blog_id = {id}"
+    print(queryStatement)
+    cur.execute(queryStatement)
+    mysql.connection.commit()
+    flash("Your blog is deleted", "success")
+    return redirect('/my-blogs')
 
 @app.route('/logout')
 def logout():

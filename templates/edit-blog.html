@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="display-2">
+    Edit Blog
+</div>
+<div class="shadow p-3 mb-5 bg-body rounded" style="margin: 40px 40px 40px 40px;">
+    <form method="POST">
+        <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Title</label>
+            <input type="text" class="form-control" id="title" name="title" value="{{ blog_form['title'] }}" />
+        </div>
+        <div class="mb-3">
+            <label for="exampleFormControlTextarea1" class="form-label">Blog body</label>
+            <textarea class="form-control" id="body" name="body" rows="3">{{ blog_form['body'] }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+{% endblock %}
