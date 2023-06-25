@@ -21,13 +21,19 @@ def register():
         return render_template('register.html')
     elif request.method == 'POST':
         userDetails = request.form
+
+        # Check the password and confirm password
+        if userDetails['password'] != userDetails['confirm_password']:
+            flash('Passwords do not match!', 'danger')
+            return render_template('register.html')
+
         p1 = userDetails['first_name']
         p2 = userDetails['last_name']
         p3 = userDetails['username']
         p4 = userDetails['email']
         p5 = userDetails['password']
         print(p1 + "," + p2 + "," + p3 + "," + p4 + "," + p5)
-        flash("Form Submitted Successfully.")
+        flash("Form Submitted Successfully.", "success")
         return redirect('/')    
     return render_template('register.html')
 
