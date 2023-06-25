@@ -1,10 +1,7 @@
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, request, redirect, flash, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_mysqldb import MySQL
 import yaml
-
-app = Flask(__name__)
-app.config['SECRET_KEY'] = "Never push this line to github public repo"
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "Never push this line to github public repo"
@@ -80,11 +77,20 @@ def login():
         if numRow > 0:
             user =  cur.fetchone()
             if check_password_hash(user['password'], loginForm['password']):
-                flash("Log In successful",'success')
+
+                # Record session information
+                session['login'] = True
+                session['username'] = user['username']
+                session['userroleid'] = str(user['role_id'])
+                session['firstName'] = user['first_name']
+                session['lastName'] = user['last_name']
+                print(session['username'] + " roleid: " + session['userroleid'])
+                flash('Welcome ' + session['firstName'], 'success')
+                #flash("Log In successful",'success')
                 return redirect('/')
             else:
                 cur.close()
-                flash("Password doesn't match", 'danger')
+                flash("Password doesn't not match", 'danger')
         else:
             cur.close()
             flash('User not found', 'danger')
