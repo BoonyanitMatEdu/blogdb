@@ -101,6 +101,26 @@ def login():
 
 @app.route('/write-blog/', methods=['GET', 'POST'])
 def write_blog():
+    try:
+        username = session['username']
+    except:
+        flash('Please sign in first', 'danger')
+        return redirect('/login')
+    if request.method == 'POST':
+        blogpost = request.form
+        title = blogpost['title']
+        body = blogpost['body'] 
+        cur = mysql.connection.cursor()
+        queryStatement = (
+            f"INSERT INTO blog(title, body, username) "
+            f"VALUES('{title}','{body}','{username}')"
+        )
+        print(queryStatement)
+        cur.execute(queryStatement)
+        mysql.connection.commit()
+        cur.close()
+        flash("Successfully posted", 'success')
+        return redirect('/')
     return render_template('write-blog.html')
 
 @app.route('/my-blogs/')
